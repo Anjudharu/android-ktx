@@ -1,0 +1,87 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:onClick="songPicked"
+  android:orientation="vertical"
+  android:padding="5dp" >
+ 
+  <TextView
+    android:id="@+id/song_title"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:textColor="#FFFFFF99"
+    android:textSize="20sp"
+    android:textStyle="bold" />
+ 
+  <TextView
+    android:id="@+id/song_artist"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:textColor="#FFFFFF99"
+    android:textSize="18sp" />
+ 
+</LinearLayout>
+public class SongAdapter extends BaseAdapter {
+ 
+  @Override
+  public int getCount() {
+    return 0;
+  }
+ 
+  @Override
+  public Object getItem(int arg0) {
+     return null;
+  }
+ 
+  @Override
+  public long getItemId(int arg0) {
+      return 0;
+  }
+ 
+  @Override
+  public View getView(int arg0, View arg1, ViewGroup arg2) {
+        return null;
+  }
+ 
+}
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import android.net.Uri;
+import android.content.ContentResolver;
+import android.database.Cursor;
+import android.widget.ListView;
+private ArrayList<Song> songList;
+private ListView songView;
+songView = (ListView)findViewById(R.id.song_list);
+songList = new ArrayList<Song>();
+public void getSongList() {
+  }
+ContentResolver musicResolver = getContentResolver();
+Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
+if(musicCursor!=null && musicCursor.moveToFirst()){
+  
+  int titleColumn = musicCursor.getColumnIndex
+    (android.provider.MediaStore.Audio.Media.TITLE);
+  int idColumn = musicCursor.getColumnIndex
+    (android.provider.MediaStore.Audio.Media._ID);
+  int artistColumn = musicCursor.getColumnIndex
+    (android.provider.MediaStore.Audio.Media.ARTIST);
+  
+  do {
+    long thisId = musicCursor.getLong(idColumn);
+    String thisTitle = musicCursor.getString(titleColumn);
+    String thisArtist = musicCursor.getString(artistColumn);
+    songList.add(new Song(thisId, thisTitle, thisArtist));
+  }
+  while (musicCursor.moveToNext());
+}
+getSongList();
+Collections.sort(songList, new Comparator<Song>(){
+  public int compare(Song a, Song b){
+    return a.getTitle().compareTo(b.getTitle());
+  }
+});
